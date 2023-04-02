@@ -3,7 +3,7 @@
     <ul v-if="!isLoading" class="grid grid-cols-[repeat(auto-fill,minmax(min(150px,100%),1fr))] gap-x-6 gap-y-4 p-4">
       <li v-for="movie in movieList" :key="movie.id">
         <router-link :to="`/movie/${movie.id}`">
-          <MovieItem :movie="movie" />
+          <MovieItem :poster="getMoviePoster(movie.poster_path)" :title="movie.title" />
         </router-link>
       </li>
     </ul>
@@ -69,5 +69,10 @@ const loadMovies = async (page: number) => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const getMoviePoster = (path: string | null): string => {
+  if (!path) return "";
+  return `https://image.tmdb.org/t/p/w342/${path}`;
 };
 </script>
