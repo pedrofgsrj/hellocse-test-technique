@@ -1,0 +1,54 @@
+/* Styles for the vue-awesome-paginate component */
+.pagination-container {
+  @apply items-center;
+  @apply flex-wrap;
+  @apply gap-x-4;
+  @apply text-white;
+}
+
+.paginate-buttons {
+  @apply min-w-[2.5rem];
+  @apply aspect-square;
+  @apply rounded;
+  @apply border-none;
+  @apply bg-transparent;
+}
+
+.back-button,
+.next-button {
+  @apply bg-slate-950;
+  @apply rounded;
+  @apply w-10;
+  @apply aspect-square;
+  @apply flex;
+  @apply justify-center;
+  @apply items-center;
+}
+
+.active-page {
+  @apply bg-slate-100;
+  @apply text-slate-950;
+}
+
+.active-page:hover {
+  @apply bg-slate-100;
+}
+
+.paginate-buttons:hover {
+  @apply bg-slate-50;
+  @apply text-slate-950;  
+}
+
+.back-button svg {
+  @apply rotate-180;
+}
+
+.back-button:hover,
+.next-button:hover {
+  @apply bg-slate-800;
+}
+
+.back-button:active,
+.next-button:active {
+  @apply bg-slate-600;
+}

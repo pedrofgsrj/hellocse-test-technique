@@ -6,8 +6,15 @@ import MovieItem from "../components/MovieItem.vue";
 
 describe("HomeView component", () => {
   const fakeList: any = [{}, {}];
-  const getSpy = vi.spyOn(api, "getPopularMovies").mockResolvedValue(fakeList);
-  let wrapper: VueWrapper;
+  const getSpy = vi.spyOn(api, "getPopularMovies").mockResolvedValue({ movies: fakeList, totalItems: 100 });
+
+  const mountComponent = () => {
+    return mount(HomeView, {
+      global: {
+        stubs: ["vue-awesome-paginate"]
+      }
+    });
+  };
 
   afterEach(() => {
     // Clear mock so tests do not interfere with each other
@@ -15,12 +22,12 @@ describe("HomeView component", () => {
   });
 
   it("fetches the movie list from the api on mount", async () => {
-    wrapper = mount(HomeView);
+    mountComponent();
     expect(getSpy).toHaveBeenCalled();
   });
 
   it("displays the list of movies", async () => {
-    wrapper = mount(HomeView);
+    const wrapper = mountComponent();
     // Wait for async methods to resolve to be sure the list will finish loading
     await flushPromises();
 
@@ -28,7 +35,24 @@ describe("HomeView component", () => {
   });
 
   it("does not display the list while loading", () => {
-    wrapper = mount(HomeView);
+    const wrapper = mountComponent();
     expect(wrapper.findAllComponents(MovieItem).length).toBe(0);
+  });
+
+  it("displays pagination controls", async () => {
+    const wrapper = mountComponent();
+    // Wait for async methods to resolve to be sure the list will finish loading
+    await flushPromises();
+
+    expect(wrapper.find("vue-awesome-paginate-stub").exists()).toBe(true);
+  });
+
+  it("does not display pagination controls if only one page", async () => {
+    getSpy.mockResolvedValue({ movies: fakeList, totalItems: 2 });
+    const wrapper = mountComponent();
+    // Wait for async methods to resolve to be sure the list will finish loading
+    await flushPromises();
+
+    expect(wrapper.find("vue-awesome-paginate-stub").exists()).toBe(false);
   });
 });

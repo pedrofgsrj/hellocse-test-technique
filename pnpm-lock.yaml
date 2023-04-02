@@ -7,6 +7,9 @@ dependencies:
   vue:
     specifier: ^3.2.47
     version: 3.2.47
+  vue-awesome-paginate:
+    specifier: ^1.1.46
+    version: 1.1.46
   vue-router:
     specifier: '4'
     version: 4.1.6(vue@3.2.47)
@@ -2198,6 +2201,12 @@ packages:
       - supports-color
       - terser
     dev: true
+
+  /vue-awesome-paginate@1.1.46:
+    resolution: {integrity: sha512-hjwAJLd2N54j0uuGgqmlTdhZw8NBFQpFiShjGrvxsA0DnvmOQjM18GEor+Ieigz6nE8VA4hQerIDBQjf4lsacg==}
+    dependencies:
+      vue: 3.2.47
+    dev: false
 
   /vue-eslint-parser@9.1.1(eslint@8.37.0):
     resolution: {integrity: sha512-C2aI/r85Q6tYcz4dpgvrs4wH/MqVrRAVIdpYedrxnATDHHkb+TroeRcDpKWGZCx/OcECMWfz7tVwQ8e+Opy6rA==}
