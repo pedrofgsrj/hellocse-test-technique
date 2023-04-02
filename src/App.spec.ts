@@ -9,7 +9,8 @@ describe("App component", () => {
   const wrapper = mount(App, {
     global: {
       plugins: [router]
-    }
+    },
+    shallow: true
   });
 
   it("displays the app header", () => {
