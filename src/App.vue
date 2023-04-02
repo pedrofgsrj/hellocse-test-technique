@@ -1,5 +1,5 @@
 <template>
-  <div class="grid h-full grid-rows-[auto_minmax(0,1fr)] bg-slate-900 text-white">
+  <div class="grid h-full grid-rows-[auto_1fr]">
     <AppHeader />
     <router-view></router-view>
   </div>
