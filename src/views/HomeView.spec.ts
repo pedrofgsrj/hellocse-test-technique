@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { VueWrapper, flushPromises, mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import HomeView from "./HomeView.vue";
 import * as api from "../api";
 import router from "../router";
