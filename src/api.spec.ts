@@ -1,63 +1,86 @@
-import { describe, it, expect, vi } from "vitest";
-import { getPopularMovies, getMovieDetails } from "./api";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { getPopularMovies, getMovieDetails, getApiConfig } from "./api";
 
-vi.stubGlobal(
-  "fetch",
-  vi.fn(() => ({
-    json: vi.fn(() => ({ results: [] }))
-  }))
-);
+vi.stubGlobal("fetch", vi.fn());
 
-describe("api", () => {
-  describe("getPopularMovies", () => {
-    it("sends request to themoviedb.org API", async () => {
-      await getPopularMovies();
-      expect(fetch).toHaveBeenCalledWith(expect.stringMatching("https://api.themoviedb.org/3/movie/popular"));
-    });
+describe("getApiConfig", () => {
+  const fakeResponse = {};
 
-    it("passes the page parameter to the request", async () => {
-      await getPopularMovies(5);
-      expect(fetch).toHaveBeenCalledWith(expect.stringMatching("page=5"));
-    });
-
-    it("returns the movie list result", async () => {
-      const fakeResponse = { results: [{}] };
-      (fetch as any).mockResolvedValueOnce({ json: vi.fn(() => fakeResponse) });
-
-      const { movies } = await getPopularMovies();
-      expect(movies).toBe(fakeResponse.results);
-    });
-
-    it("returns the total movie count", async () => {
-      const fakeResponse = { total_results: 100 };
-      (fetch as any).mockResolvedValueOnce({ json: vi.fn(() => fakeResponse) });
-
-      const { totalItems } = await getPopularMovies();
-      expect(totalItems).toBe(100);
-    });
-
-    it("limits the total movie count returned if the maximum page count is exceed", async () => {
-      const fakeResponse = { total_results: 200000 };
-      (fetch as any).mockImplementationOnce(() => ({
-        json: vi.fn(() => fakeResponse)
-      }));
-
-      const { totalItems } = await getPopularMovies();
-      expect(totalItems).toBe(10000);
-    });
+  beforeEach(() => {
+    (fetch as any).mockResolvedValue({ json: vi.fn(() => fakeResponse) });
   });
 
-  describe("getMovieDetails", () => {
-    it("sends request to themoviedb.org API", async () => {
-      await getMovieDetails("1");
-      expect(fetch).toHaveBeenCalledWith(expect.stringMatching("https://api.themoviedb.org/3/movie/"));
-    });
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
 
-    it("returns the movie result", async () => {
-      const fakeResult = {};
-      (fetch as any).mockResolvedValueOnce({ json: vi.fn(() => fakeResult) });
+  it("sends request to the API", async () => {
+    await getApiConfig();
+    expect(fetch).toHaveBeenCalledWith(expect.stringMatching("https://api.themoviedb.org/3/configuration"));
+  });
 
-      expect(await getMovieDetails("1")).toBe(fakeResult);
-    });
+  it("returns the API configuration", async () => {
+    expect(await getApiConfig()).toBe(fakeResponse);
+  });
+});
+
+describe("getPopularMovies", () => {
+  const fakeResponse = { results: [], total_results: 100 };
+
+  beforeEach(() => {
+    (fetch as any).mockResolvedValue({ json: vi.fn(() => fakeResponse) });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("sends request to the API", async () => {
+    await getPopularMovies();
+    expect(fetch).toHaveBeenCalledWith(expect.stringMatching("https://api.themoviedb.org/3/movie/popular"));
+  });
+
+  it("passes the page parameter to the request", async () => {
+    await getPopularMovies(5);
+    expect(fetch).toHaveBeenCalledWith(expect.stringMatching("page=5"));
+  });
+
+  it("returns the movie list result", async () => {
+    const { movies } = await getPopularMovies();
+    expect(movies).toBe(fakeResponse.results);
+  });
+
+  it("returns the total movie count", async () => {
+    const { totalItems } = await getPopularMovies();
+    expect(totalItems).toBe(100);
+  });
+
+  it("limits the total movie count returned if the maximum page count is exceed", async () => {
+    const fakeResponse = { total_results: 200000 };
+    (fetch as any).mockResolvedValue({ json: vi.fn(() => fakeResponse) });
+
+    const { totalItems } = await getPopularMovies();
+    expect(totalItems).toBe(10000);
+  });
+});
+
+describe("getMovieDetails", () => {
+  const fakeResponse = {};
+
+  beforeEach(() => {
+    (fetch as any).mockResolvedValue({ json: vi.fn(() => fakeResponse) });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("sends request to the API", async () => {
+    await getMovieDetails("1");
+    expect(fetch).toHaveBeenCalledWith(expect.stringMatching("https://api.themoviedb.org/3/movie/"));
+  });
+
+  it("returns the movie result", async () => {
+    expect(await getMovieDetails("1")).toBe(fakeResponse);
   });
 });

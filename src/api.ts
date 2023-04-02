@@ -1,4 +1,5 @@
-import { Movie, MovieDetail } from "./interfaces/movie";
+import { ApiConfig, PopularMoviesResponse } from "./interfaces/api";
+import { MovieDetail } from "./interfaces/movie";
 
 const baseUrl = "https://api.themoviedb.org/3";
 const apiKey = import.meta.env.VITE_API_KEY;
@@ -7,12 +8,16 @@ const apiKey = import.meta.env.VITE_API_KEY;
 export const ITEMS_PER_PAGE = 20;
 const PAGE_COUNT_MAX = 500;
 
-interface PopularMoviesResponse {
-  movies: Movie[];
-  totalItems: number;
-  page?: number;
-  totalPages?: number;
-}
+// Key used to store/retrive the API config in the localStorage
+export const API_CONFIG_KEY = "TMDB_API_CONFIG";
+
+/**
+ * Gets the config for the TMBD API
+ */
+export const getApiConfig = async (): Promise<ApiConfig | null> => {
+  const response = await fetch(`${baseUrl}/configuration?api_key=${apiKey}`);
+  return await response.json();
+};
 
 /**
  * Sends a request to the API to fetch the list of popular movies
