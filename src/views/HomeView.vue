@@ -2,7 +2,9 @@
   <main class="flex flex-col gap-y-6 overflow-y-auto px-8 pb-8 pt-4">
     <ul v-if="!isLoading" class="grid grid-cols-[repeat(auto-fill,minmax(min(150px,100%),1fr))] gap-x-6 gap-y-4 p-4">
       <li v-for="movie in movieList" :key="movie.id">
-        <MovieItem :movie="movie" />
+        <router-link :to="`/movie/${movie.id}`">
+          <MovieItem :movie="movie" />
+        </router-link>
       </li>
     </ul>
 
