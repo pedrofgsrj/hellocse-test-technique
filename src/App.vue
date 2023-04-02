@@ -1,7 +1,9 @@
 <template>
   <div class="grid h-full grid-rows-[auto_1fr]">
     <AppHeader />
-    <router-view></router-view>
+    <div class="overflow-y-auto">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
