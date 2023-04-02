@@ -42,6 +42,7 @@ import { onMounted, ref, watchEffect } from "vue";
 import MovieItem from "../components/MovieItem.vue";
 import { Movie } from "../interfaces/movie";
 import { getPopularMovies, ITEMS_PER_PAGE } from "../api";
+import { getMoviePoster } from "../utils";
 
 const isLoading = ref(false);
 const movieList = ref<Movie[]>([]);
@@ -69,10 +70,5 @@ const loadMovies = async (page: number) => {
   } finally {
     isLoading.value = false;
   }
-};
-
-const getMoviePoster = (path: string | null): string => {
-  if (!path) return "";
-  return `https://image.tmdb.org/t/p/w342/${path}`;
 };
 </script>
