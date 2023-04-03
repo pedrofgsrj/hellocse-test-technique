@@ -7,7 +7,10 @@ import MovieCover from "../components/MovieCover.vue";
 import { RouterLink } from "vue-router";
 
 describe("HomeView component", () => {
-  const fakeList: any = [{}, {}];
+  const fakeList: any = [
+    { title: "Movie A", id: 0 },
+    { title: "Movie B", id: 1 }
+  ];
   const getSpy = vi.spyOn(api, "getPopularMovies").mockResolvedValue({ movies: fakeList, totalItems: 100 });
 
   const mountComponent = () => {
@@ -66,5 +69,29 @@ describe("HomeView component", () => {
     await flushPromises();
 
     expect(wrapper.find("vue-awesome-paginate-stub").exists()).toBe(false);
+  });
+
+  describe("Search", () => {
+    it("displays a search input", () => {
+      const wrapper = mountComponent();
+      expect(wrapper.find("input[type='search']").exists()).toBe(true);
+    });
+
+    it("filters displayed movies when searching", async () => {
+      const wrapper = mountComponent();
+      // Wait for async methods to resolve to be sure the list will finish loading
+      await flushPromises();
+
+      expect(wrapper.text()).toMatch("Movie A");
+      expect(wrapper.text()).toMatch("Movie B");
+
+      await wrapper.find("input[type='search']").setValue("Movie A");
+      expect(wrapper.text()).toMatch("Movie A");
+      expect(wrapper.text()).not.toMatch("Movie B");
+
+      await wrapper.find("input[type='search']").setValue("Movie B");
+      expect(wrapper.text()).toMatch("Movie B");
+      expect(wrapper.text()).not.toMatch("Movie A");
+    });
   });
 });
