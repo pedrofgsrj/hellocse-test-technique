@@ -1,10 +1,10 @@
 <template>
   <main class="mx-auto flex max-w-screen-lg flex-wrap items-start gap-[5%] px-8 pb-8 pt-4">
-    <!-- Movie poster -->
-    <img
+    <!-- Movie cover -->
+    <MovieItem
       v-if="movie"
-      :src="getMoviePoster(movie.poster_path)"
-      :alt="movie.title"
+      :poster="movie.poster_path || ''"
+      :poster-sizes="imageSizeMap"
       class="w-1/3 min-w-[200px] max-w-md flex-1 rounded-md border border-slate-800 shadow"
     />
 
@@ -45,9 +45,9 @@
       <aside>
         <p>Other popular movies</p>
         <ul class="flex gap-4 overflow-x-auto p-4">
-          <li v-for="movie in otherMovies" :key="movie.id" class="w-20 shrink-0">
-            <router-link :to="`/movie/${movie.id}`" class="h-full">
-              <MovieItem :poster="getMoviePoster(movie.poster_path)" />
+          <li v-for="otherMovie in otherMovies" :key="otherMovie.id" class="w-20 shrink-0">
+            <router-link :to="`/movie/${otherMovie.id}`" class="h-full">
+              <MovieItem :poster="otherMovie.poster_path || ''" :poster-sizes="imageSizeMap" />
             </router-link>
           </li>
         </ul>
@@ -60,14 +60,16 @@
 import { getMovieDetails, getPopularMovies } from "../api";
 import { Movie, MovieDetail } from "../interfaces/movie";
 import { onMounted, ref, watchEffect } from "vue";
-import { getMoviePoster } from "../utils";
 import MovieItem from "../components/MovieItem.vue";
+import { getImageSizeMap } from "../utils";
 
 const props = defineProps<{ movieId: string }>();
 
 const isLoading = ref(false);
 const movie = ref<MovieDetail | undefined>();
 const otherMovies = ref<Movie[]>([]);
+
+const imageSizeMap = getImageSizeMap();
 
 onMounted(async () => {
   watchEffect(async () => {
@@ -88,9 +90,6 @@ const loadMovieDetails = async (movieId: string) => {
   }
 };
 
-/**
- * Loads the list of other popular movies
- */
 const loadOtherMovies = async () => {
   try {
     const { movies } = await getPopularMovies();

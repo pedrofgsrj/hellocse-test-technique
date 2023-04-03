@@ -3,7 +3,7 @@
     <ul v-if="!isLoading" class="grid grid-cols-[repeat(auto-fill,minmax(min(150px,100%),1fr))] gap-x-6 gap-y-4 p-4">
       <li v-for="movie in movieList" :key="movie.id">
         <router-link :to="`/movie/${movie.id}`">
-          <MovieItem :poster="getMoviePoster(movie.poster_path)" :title="movie.title" />
+          <MovieItem :poster="movie.poster_path || ''" :poster-sizes="imageSizeMap" :title="movie.title" />
         </router-link>
       </li>
     </ul>
@@ -42,12 +42,14 @@ import { onMounted, ref, watchEffect } from "vue";
 import MovieItem from "../components/MovieItem.vue";
 import { Movie } from "../interfaces/movie";
 import { getPopularMovies, ITEMS_PER_PAGE } from "../api";
-import { getMoviePoster } from "../utils";
+import { getImageSizeMap } from "../utils";
 
 const isLoading = ref(false);
 const movieList = ref<Movie[]>([]);
 const totalCount = ref(0);
 const currentPage = ref(1);
+
+const imageSizeMap = getImageSizeMap();
 
 onMounted(() => {
   watchEffect(() => {
