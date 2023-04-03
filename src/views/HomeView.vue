@@ -1,11 +1,15 @@
 <template>
   <main class="flex flex-col gap-y-6 overflow-y-auto px-8 pb-8 pt-4">
-    <input
-      v-model="searchText"
-      type="search"
-      placeholder="Search movie..."
-      class="mx-4 max-w-sm rounded bg-black/50 px-4 py-2"
-    />
+    <header class="mx-4 flex flex-wrap justify-between gap-8">
+      <input
+        v-model="searchText"
+        type="search"
+        placeholder="Search movie..."
+        class="max-w-sm flex-1 rounded bg-black/50 px-4 py-2"
+      />
+
+      <MovieSort v-model="sort" class="shrink-0" />
+    </header>
 
     <ul v-if="!isLoading" class="grid grid-cols-[repeat(auto-fill,minmax(min(150px,100%),1fr))] gap-x-6 gap-y-4 p-4">
       <li v-for="movie in displayedMovies" :key="movie.id">
@@ -47,6 +51,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watchEffect } from "vue";
 import MovieCover from "../components/MovieCover.vue";
+import MovieSort, { SortOption, SortTypes } from "../components/MovieSort.vue";
 import { Movie } from "../interfaces/movie";
 import { getPopularMovies, ITEMS_PER_PAGE } from "../api";
 import { getImageSizeMap } from "../utils";
@@ -56,6 +61,7 @@ const movieList = ref<Movie[]>([]);
 const totalCount = ref(0);
 const currentPage = ref(1);
 const searchText = ref("");
+const sort = ref<SortOption>();
 
 const imageSizeMap = getImageSizeMap();
 
@@ -66,10 +72,14 @@ onMounted(() => {
 });
 
 const displayedMovies = computed<Movie[]>(() => {
-  const search = searchText.value.trim();
-  if (!search) return movieList.value;
+  let list = movieList.value;
 
-  return movieList.value.filter(({ title }) => title.toLowerCase().includes(search.toLowerCase()));
+  const search = searchText.value.trim();
+  if (search) {
+    list = movieList.value.filter(({ title }) => title.toLowerCase().includes(search.toLowerCase()));
+  }
+
+  return sortList(list, sort.value);
 });
 
 /**
@@ -87,5 +97,19 @@ const loadMovies = async (page: number) => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const sortList = (list: Movie[], sortOption?: SortOption): Movie[] => {
+  if (!sortOption) return list;
+
+  const sortKey = sortOption.value === SortTypes.RATING ? "vote_average" : "popularity";
+
+  return list.sort((a, b) => {
+    if (sortOption.asc) {
+      return a[sortKey] - b[sortKey];
+    } else {
+      return b[sortKey] - a[sortKey];
+    }
+  });
 };
 </script>

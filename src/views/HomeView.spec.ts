@@ -5,11 +5,12 @@ import * as api from "../api";
 import router from "../router";
 import MovieCover from "../components/MovieCover.vue";
 import { RouterLink } from "vue-router";
+import MovieSort, { SortTypes } from "../components/MovieSort.vue";
 
 describe("HomeView component", () => {
   const fakeList: any = [
-    { title: "Movie A", id: 0 },
-    { title: "Movie B", id: 1 }
+    { title: "Movie A", id: 0, popularity: 10, vote_average: 7 },
+    { title: "Movie B", id: 1, popularity: 20, vote_average: 4 }
   ];
   const getSpy = vi.spyOn(api, "getPopularMovies").mockResolvedValue({ movies: fakeList, totalItems: 100 });
 
@@ -92,6 +93,55 @@ describe("HomeView component", () => {
       await wrapper.find("input[type='search']").setValue("Movie B");
       expect(wrapper.text()).toMatch("Movie B");
       expect(wrapper.text()).not.toMatch("Movie A");
+    });
+  });
+
+  describe("Sort", () => {
+    it("displays sorting controls", () => {
+      const wrapper = mountComponent();
+      expect(wrapper.findComponent(MovieSort).exists()).toBe(true);
+    });
+
+    it("sorts displayed movies when changing selected sort option", async () => {
+      const wrapper = mountComponent();
+      // Wait for async methods to resolve to be sure the list will finish loading
+      await flushPromises();
+
+      let movieList = wrapper.findAllComponents(MovieCover);
+      expect(movieList[0].text()).toMatch("Movie A");
+      expect(movieList[1].text()).toMatch("Movie B");
+
+      wrapper.findComponent(MovieSort).vm.$emit("update:modelValue", { asc: false, value: SortTypes.POPULARITY });
+      // Wait for UI to be updated
+      await wrapper.vm.$nextTick();
+
+      movieList = wrapper.findAllComponents(MovieCover);
+      expect(movieList[0].text()).toMatch("Movie B");
+      expect(movieList[1].text()).toMatch("Movie A");
+
+      wrapper.findComponent(MovieSort).vm.$emit("update:modelValue", { asc: true, value: SortTypes.POPULARITY });
+      // Wait for UI to be updated
+      await wrapper.vm.$nextTick();
+
+      movieList = wrapper.findAllComponents(MovieCover);
+      expect(movieList[0].text()).toMatch("Movie A");
+      expect(movieList[1].text()).toMatch("Movie B");
+
+      wrapper.findComponent(MovieSort).vm.$emit("update:modelValue", { asc: true, value: SortTypes.RATING });
+      // Wait for UI to be updated
+      await wrapper.vm.$nextTick();
+
+      movieList = wrapper.findAllComponents(MovieCover);
+      expect(movieList[0].text()).toMatch("Movie B");
+      expect(movieList[1].text()).toMatch("Movie A");
+
+      wrapper.findComponent(MovieSort).vm.$emit("update:modelValue", { asc: false, value: SortTypes.RATING });
+      // Wait for UI to be updated
+      await wrapper.vm.$nextTick();
+
+      movieList = wrapper.findAllComponents(MovieCover);
+      expect(movieList[0].text()).toMatch("Movie A");
+      expect(movieList[1].text()).toMatch("Movie B");
     });
   });
 });
