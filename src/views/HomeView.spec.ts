@@ -3,7 +3,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import HomeView from "./HomeView.vue";
 import * as api from "../api";
 import router from "../router";
-import MovieItem from "../components/MovieItem.vue";
+import MovieCover from "../components/MovieCover.vue";
 import { RouterLink } from "vue-router";
 
 describe("HomeView component", () => {
@@ -34,12 +34,12 @@ describe("HomeView component", () => {
     // Wait for async methods to resolve to be sure the list will finish loading
     await flushPromises();
 
-    expect(wrapper.findAllComponents(MovieItem).length).toBe(2);
+    expect(wrapper.findAllComponents(MovieCover).length).toBe(2);
   });
 
   it("does not display the list while loading", () => {
     const wrapper = mountComponent();
-    expect(wrapper.findAllComponents(MovieItem).length).toBe(0);
+    expect(wrapper.findAllComponents(MovieCover).length).toBe(0);
   });
 
   it("links movie items to the movie's page", async () => {
@@ -48,7 +48,7 @@ describe("HomeView component", () => {
     await flushPromises();
 
     expect(wrapper.findAllComponents(RouterLink).length).toBe(2);
-    expect(wrapper.findComponent(RouterLink).findComponent(MovieItem).exists()).toBe(true);
+    expect(wrapper.findComponent(RouterLink).findComponent(MovieCover).exists()).toBe(true);
   });
 
   it("displays pagination controls", async () => {

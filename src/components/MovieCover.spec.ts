@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import MovieItem from "./MovieItem.vue";
+import MovieCover from "./MovieCover.vue";
 
-describe("MovieItem component", () => {
-  const wrapper = mount(MovieItem, {
+describe("MovieCover component", () => {
+  const wrapper = mount(MovieCover, {
     props: {
       title: "fake title",
       poster: "fakePath",

@@ -3,7 +3,7 @@ import { VueWrapper, flushPromises, mount } from "@vue/test-utils";
 import MovieDetailView from "./MovieDetailView.vue";
 import * as api from "../api";
 import router from "../router";
-import MovieItem from "../components/MovieItem.vue";
+import MovieCover from "../components/MovieCover.vue";
 import { RouterLink } from "vue-router";
 
 describe("MovieDetailView component", () => {
@@ -60,7 +60,7 @@ describe("MovieDetailView component", () => {
 
   describe("Movie cover", () => {
     it("displays the movie cover", () => {
-      expect(wrapper.findComponent(MovieItem).props("poster")).toMatch("fakePath");
+      expect(wrapper.findComponent(MovieCover).props("poster")).toMatch("fakePath");
     });
 
     it("does not display the movie poster if not present", async () => {
@@ -108,12 +108,12 @@ describe("MovieDetailView component", () => {
     });
 
     it("displays the list of other popular movies", () => {
-      expect(wrapper.find("aside").findAllComponents(MovieItem).length).toBe(2);
+      expect(wrapper.find("aside").findAllComponents(MovieCover).length).toBe(2);
     });
 
     it("links movie items from the list to the movie's page", async () => {
       expect(wrapper.findAllComponents(RouterLink).length).toBe(2);
-      expect(wrapper.findComponent(RouterLink).findComponent(MovieItem).exists()).toBe(true);
+      expect(wrapper.findComponent(RouterLink).findComponent(MovieCover).exists()).toBe(true);
     });
   });
 });
